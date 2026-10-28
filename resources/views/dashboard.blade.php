@@ -1,0 +1,145 @@
+@use('App\Support\Money')
+<x-app-layout title="Dashboard" :month="$month">
+    <div class="page-heading">
+        <div><span class="eyebrow">JOUW FINANCIËLE OVERZICHT</span>
+            <h1>Hallo {{ explode(' ', auth()->user()->name)[0] }}, tijd voor overzicht<span class="heading-dot">.</span>
+            </h1>
+            <p>Zo staat jouw maand ervoor. Alle belangrijke bedragen op één plek.</p>
+        </div><a class="btn btn-primary"
+            href="{{ route('expenses.create', ['month' => $month->format('Y-m'), 'return_to' => 'dashboard']) }}"><x-icon
+                name="plus" /> Vaste last toevoegen</a>
+    </div>
+    <div class="overview-period"><span class="period-dot"></span>{{ ucfirst($month->translatedFormat('F Y')) }}<span
+            class="period-divider">·</span>Gemiddelde maandbedragen</div>
+    @if ($incomes->isEmpty() && $expenses->isEmpty())
+        <section class="onboarding"><span class="onboarding-icon"><x-icon name="sparkles" /></span>
+            <div>
+                <h2>Jouw overzicht begint hier</h2>
+                <p>Voeg je netto inkomen en vaste lasten toe. GeldGrip rekent de rest voor je uit.</p>
+            </div><a
+                href="{{ route('incomes.create', ['month' => $month->format('Y-m'), 'return_to' => 'dashboard']) }}"
+                class="btn btn-primary">Inkomen toevoegen <x-icon name="arrow-right" /></a>
+        </section>
+    @elseif($incomes->isEmpty())
+        <div class="alert info"><x-icon name="info" /><span>Er zijn geen actieve inkomsten in deze maand. <a
+                    href="{{ route('incomes.create', ['month' => $month->format('Y-m')]) }}">Voeg een inkomstenbron
+                    toe</a> voor een compleet overzicht.</span></div>
+    @endif
+    @if ($remaining < 0)
+        <div class="alert error" role="alert"><x-icon name="triangle-alert" /><span><strong>Je vaste lasten zijn hoger
+                    dan je inkomen.</strong> Je komt gemiddeld {{ Money::format(abs($remaining)) }} per maand tekort na
+                je geregistreerde vaste lasten.</span></div>
+    @endif
+    <section class="stats-grid" aria-label="Maandelijkse bedragen">
+        <article class="stat-card">
+            <div class="stat-top"><span>Netto maandinkomen</span><span class="stat-icon green"><x-icon
+                        name="wallet" /></span></div><strong class="stat-value">{{ Money::format($income) }}</strong>
+            <div class="stat-foot"><span class="mini-dot green"></span>{{ $incomes->count() }} actieve
+                {{ $incomes->count() === 1 ? 'inkomstenbron' : 'inkomstenbronnen' }}<a
+                    href="{{ route('incomes.index', ['month' => $month->format('Y-m')]) }}"
+                    aria-label="Inkomsten bekijken"><x-icon name="arrow-up-right" /></a></div>
+        </article>
+        <article class="stat-card">
+            <div class="stat-top"><span>Totale vaste lasten</span><span class="stat-icon purple"><x-icon
+                        name="receipt-text" /></span></div><strong
+                class="stat-value">{{ Money::format($costs) }}</strong>
+            <div class="stat-foot"><span class="mini-dot purple"></span>{{ $expenses->count() }} actieve vaste
+                {{ $expenses->count() === 1 ? 'last' : 'lasten' }}<a
+                    href="{{ route('expenses.index', ['month' => $month->format('Y-m')]) }}"
+                    aria-label="Vaste lasten bekijken"><x-icon name="arrow-up-right" /></a></div>
+        </article>
+        <article @class(['stat-card', 'stat-featured', 'negative' => $remaining < 0])>
+            <div class="stat-top"><span>Over na vaste lasten</span><span class="stat-icon"><x-icon
+                        :name="$remaining < 0 ? 'trending-down' : 'trending-up'" /></span></div><strong
+                class="stat-value">{{ Money::format($remaining) }}</strong>
+            <div class="stat-foot"><span
+                    class="percentage-badge">{{ $percentage !== null ? str_replace('.', ',', (string) $percentage) . '%' : '—' }}</span><span>{{ $percentage !== null ? 'van je netto inkomen' : 'Voeg je inkomen toe' }}</span><x-icon
+                    name="sparkles" class="featured-spark" /></div>
+        </article>
+    </section>
+    <div class="calculation-note"><x-icon name="info" /><span>Dit is wat overblijft na je geregistreerde vaste
+            lasten. Dagelijkse uitgaven en je banksaldo zijn hierin niet meegenomen.</span></div>
+    <section class="charts-grid" aria-label="Grafieken">
+        <article class="panel">
+            <div class="panel-heading">
+                <div>
+                    <h2>Waar gaat je geld naartoe?</h2>
+                    <p>Je vaste lasten per categorie</p>
+                </div><span class="chart-heading-icon"><x-icon name="chart-pie" /></span>
+            </div>
+            @if ($costs > 0)
+                <div class="donut-content">
+                    <div class="donut-wrap"><canvas id="category-chart" role="img"
+                            aria-label="Verdeling vaste lasten. De bedragen per categorie staan naast de grafiek."></canvas>
+                        <div class="donut-label"><small>Vaste
+                                lasten</small><strong>{{ Money::format($costs) }}</strong><span>per maand</span></div>
+                    </div>
+                    <div class="chart-legend">
+                        @foreach ($categories as $category)
+                            <div class="legend-row"><span class="legend-name"><span class="legend-dot"
+                                        style="--dot-color: {{ $category['color'] }}"></span>{{ $category['label'] }}</span><strong>{{ Money::format($category['cents']) }}</strong>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            @else
+                <div class="chart-empty">
+                    <div class="empty-donut"><x-icon name="chart-pie" /></div><strong>Maak je verdeling
+                        zichtbaar</strong>
+                    <p>Voeg een vaste last toe en ontdek waar je geld naartoe gaat.</p><a
+                        href="{{ route('expenses.create', ['month' => $month->format('Y-m'), 'return_to' => 'dashboard']) }}">Voeg
+                        je eerste vaste last toe <x-icon name="arrow-right" /></a>
+                </div>
+            @endif
+        </article>
+        <article class="panel">
+            <div class="panel-heading">
+                <div>
+                    <h2>Inkomsten & vaste lasten</h2>
+                    <p>Het verschil in één oogopslag</p>
+                </div><span class="chart-heading-icon"><x-icon name="chart-no-axes-column-increasing" /></span>
+            </div>
+            <div class="comparison-chart"><canvas id="comparison-chart" role="img"
+                    aria-label="Inkomsten {{ Money::format($income) }} en vaste lasten {{ Money::format($costs) }} gemiddeld per maand."></canvas>
+            </div>
+            <div class="comparison-legend"><span><i class="legend-dot"
+                        style="--dot-color:#10b981"></i>Inkomsten</span><span><i class="legend-dot"
+                        style="--dot-color:#c7d2fe"></i>Vaste lasten</span><span
+                    class="comparison-month">{{ ucfirst($month->translatedFormat('F Y')) }}</span></div>
+        </article>
+    </section>
+    <section class="insights-grid" aria-label="Inzichten">
+        <div class="insight"><span class="insight-icon amber"><x-icon name="lightbulb" /></span>
+            <div><span>JOUW GROOTSTE VASTE LAST</span>
+                <p>
+                    @if ($largest)
+                        <strong>{{ $largest->name }}</strong> · {{ Money::format($largest->monthlyCents()) }} per
+                        maand
+                    @else
+                        Voeg je vaste lasten toe voor persoonlijk inzicht.
+                    @endif
+                </p>
+            </div>
+        </div>
+        <div class="insight"><span class="insight-icon green"><x-icon name="badge-check" /></span>
+            <div><span>GOED OM TE WETEN</span>
+                <p>Jaarlijkse kosten worden verdeeld over 12 maanden.</p>
+            </div>
+        </div>
+    </section>
+    <section class="panel expenses-panel">
+        <div class="panel-heading">
+            <div>
+                <h2>Je vaste lasten</h2>
+                <p>Actieve lasten in {{ $month->translatedFormat('F Y') }}</p>
+            </div><a class="text-link" href="{{ route('expenses.index', ['month' => $month->format('Y-m')]) }}">Alles
+                bekijken <x-icon name="arrow-right" /></a>
+        </div>
+        <x-entry-table :entries="$expenses->take(5)" type="expense" :month="$month" :dashboard="true" />
+        @if ($expenses->isNotEmpty())
+            <div class="table-footer"><span>{{ min(5, $expenses->count()) }} van {{ $expenses->count() }} vaste
+                    lasten</span><span>Gemiddeld per maand <strong>{{ Money::format($costs) }}</strong></span></div>
+        @endif
+    </section>
+    <script id="chart-data" type="application/json">{!! json_encode(['categories' => $categories, 'income' => $income, 'costs' => $costs], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!}</script>
+</x-app-layout>

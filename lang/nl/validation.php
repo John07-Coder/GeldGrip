@@ -16,5 +16,7 @@ return [
     'attributes' => ['name' => 'naam', 'email' => 'e-mailadres', 'password' => 'wachtwoord',
         'amount' => 'bedrag', 'frequency' => 'frequentie', 'start_date' => 'startdatum', 'end_date' => 'einddatum',
         'category' => 'categorie', 'payment_day' => 'betaaldag', 'current_password' => 'huidig wachtwoord',
-        'month' => 'maand', 'search' => 'zoekopdracht', 'is_active' => 'status'],
+        'month' => 'maand', 'search' => 'zoekopdracht', 'is_active' => 'status',
+        'expense_date' => 'datum van de uitgave', 'description' => 'beschrijving', 'sort' => 'sortering', 'direction' => 'sorteerrichting'],
+    'in' => 'Kies een geldige waarde voor :attribute.',
 ];

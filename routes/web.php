@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BudgetSimulatorController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\FixedExpenseController;
 use App\Http\Controllers\IncomeSourceController;
 use App\Http\Controllers\SettingsController;
@@ -22,6 +24,8 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
+    Route::resource('uitgaven', ExpenseController::class)->except('show')->names('spending')->parameters(['uitgaven' => 'spending']);
+    Route::get('/budgetsimulator', BudgetSimulatorController::class)->name('simulator');
     Route::resource('inkomsten', IncomeSourceController::class)->except('show')->names('incomes')->parameters(['inkomsten' => 'income']);
     Route::resource('vaste-lasten', FixedExpenseController::class)->except('show')->names('expenses')->parameters(['vaste-lasten' => 'expense']);
     Route::get('/instellingen', [SettingsController::class, 'edit'])->name('settings.edit');

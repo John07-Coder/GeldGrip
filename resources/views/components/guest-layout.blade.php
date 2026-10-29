@@ -7,7 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#0f172a">
     <title>{{ $title }} · GeldGrip</title>
-    <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">@vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
+    <x-theme-init />
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
 <body class="auth-body">
@@ -26,6 +28,7 @@
         </div><small>GeldGrip · Kleine stappen, meer financiële rust.</small>
     </aside>
     <main class="auth-main">
+        <div class="guest-theme"><x-theme-toggle /></div>
         <div class="auth-mobile-brand"><x-brand /></div>
         <div class="auth-card"><x-alerts />{{ $slot }}</div>
         <p class="auth-footer">Meer inzicht begint met één kleine stap.</p>

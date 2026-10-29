@@ -6,6 +6,14 @@
         </div>
     </div>
     <div class="settings-grid">
+        <section class="panel form-panel appearance-panel">
+            <h2>Weergave</h2><p class="section-description">Je keuze wordt direct toegepast en op dit apparaat onthouden.</p>
+            <fieldset class="theme-options"><legend class="sr-only">Kies je weergave</legend>
+                @foreach ([['light', 'sun', 'Licht'], ['dark', 'moon', 'Donker'], ['system', 'monitor', 'Systeemvoorkeur']] as [$value, $icon, $label])
+                    <label class="theme-option"><input type="radio" name="theme" value="{{ $value }}" data-theme-option @checked($value === 'system')><x-icon :name="$icon" /><span>{{ $label }}</span></label>
+                @endforeach
+            </fieldset><p class="theme-status" id="theme-status" role="status" aria-live="polite"></p>
+        </section>
         <section class="panel form-panel">
             <h2>Je profiel</h2>
             <p class="section-description">Zo herkennen we je in GeldGrip.</p>
@@ -30,7 +38,7 @@
         </section>
         <section class="panel form-panel danger-panel">
             <h2>Account verwijderen</h2>
-            <p class="section-description">Je account, inkomsten en vaste lasten worden definitief verwijderd. Vul je
+            <p class="section-description">Je account, inkomsten, vaste lasten en losse uitgaven worden definitief verwijderd. Vul je
                 wachtwoord in om door te gaan.</p>
             <form method="post" action="{{ route('settings.destroy') }}" class="form-stack"
                 data-confirm="Je account en alle financiële gegevens worden definitief verwijderd. Wil je doorgaan?">

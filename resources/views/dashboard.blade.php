@@ -6,12 +6,12 @@
             </h1>
             <p>Zo staat jouw maand ervoor. Alle belangrijke bedragen op één plek.</p>
         </div><a class="btn btn-primary"
-            href="{{ route('expenses.create', ['month' => $month->format('Y-m'), 'return_to' => 'dashboard']) }}"><x-icon
-                name="plus" /> Vaste last toevoegen</a>
+            href="{{ route('spending.create', ['month' => $month->format('Y-m'), 'return_to' => 'dashboard']) }}"><x-icon
+                name="plus" /> Uitgave toevoegen</a>
     </div>
     <div class="overview-period"><span class="period-dot"></span>{{ ucfirst($month->translatedFormat('F Y')) }}<span
-            class="period-divider">·</span>Gemiddelde maandbedragen</div>
-    @if ($incomes->isEmpty() && $expenses->isEmpty())
+            class="period-divider">·</span>Maandgemiddelden en geregistreerde uitgaven</div>
+    @if ($incomes->isEmpty() && $expenses->isEmpty() && $variableExpenses->isEmpty())
         <section class="onboarding"><span class="onboarding-icon"><x-icon name="sparkles" /></span>
             <div>
                 <h2>Jouw overzicht begint hier</h2>
@@ -26,11 +26,9 @@
                     toe</a> voor een compleet overzicht.</span></div>
     @endif
     @if ($remaining < 0)
-        <div class="alert error" role="alert"><x-icon name="triangle-alert" /><span><strong>Je vaste lasten zijn hoger
-                    dan je inkomen.</strong> Je komt gemiddeld {{ Money::format(abs($remaining)) }} per maand tekort na
-                je geregistreerde vaste lasten.</span></div>
+        <div class="alert error" role="alert"><x-icon name="triangle-alert" /><span><strong>{{ $variableCosts > 0 ? 'Je vaste lasten en uitgaven zijn hoger dan je inkomen.' : 'Je vaste lasten zijn hoger dan je inkomen.' }}</strong> Je komt {{ Money::format(abs($remaining)) }} tekort op basis van je maandgemiddelden en geregistreerde uitgaven.</span></div>
     @endif
-    <section class="stats-grid" aria-label="Maandelijkse bedragen">
+    <section class="stats-grid stats-four" aria-label="Maandelijkse bedragen">
         <article class="stat-card">
             <div class="stat-top"><span>Netto maandinkomen</span><span class="stat-icon green"><x-icon
                         name="wallet" /></span></div><strong class="stat-value">{{ Money::format($income) }}</strong>
@@ -48,8 +46,12 @@
                     href="{{ route('expenses.index', ['month' => $month->format('Y-m')]) }}"
                     aria-label="Vaste lasten bekijken"><x-icon name="arrow-up-right" /></a></div>
         </article>
+        <article class="stat-card">
+            <div class="stat-top"><span>Maandelijkse uitgaven</span><span class="stat-icon amber"><x-icon name="shopping-basket" /></span></div><strong class="stat-value">{{ Money::format($variableCosts) }}</strong>
+            <div class="stat-foot">{{ $variableExpenses->count() }} losse uitgaven<a href="{{ route('spending.index', ['month' => $month->format('Y-m')]) }}" aria-label="Uitgaven bekijken"><x-icon name="arrow-up-right" /></a></div>
+        </article>
         <article @class(['stat-card', 'stat-featured', 'negative' => $remaining < 0])>
-            <div class="stat-top"><span>Over na vaste lasten</span><span class="stat-icon"><x-icon
+            <div class="stat-top"><span>Resterend budget</span><span class="stat-icon"><x-icon
                         :name="$remaining < 0 ? 'trending-down' : 'trending-up'" /></span></div><strong
                 class="stat-value">{{ Money::format($remaining) }}</strong>
             <div class="stat-foot"><span
@@ -57,8 +59,7 @@
                     name="sparkles" class="featured-spark" /></div>
         </article>
     </section>
-    <div class="calculation-note"><x-icon name="info" /><span>Dit is wat overblijft na je geregistreerde vaste
-            lasten. Dagelijkse uitgaven en je banksaldo zijn hierin niet meegenomen.</span></div>
+    <div class="calculation-note"><x-icon name="info" /><span>Netto maandinkomen − gemiddelde vaste lasten − geregistreerde losse uitgaven in deze maand. Dit is geen banksaldo; niet-geregistreerde aankopen zijn niet meegenomen.</span></div>
     <section class="charts-grid" aria-label="Grafieken">
         <article class="panel">
             <div class="panel-heading">
@@ -95,16 +96,16 @@
         <article class="panel">
             <div class="panel-heading">
                 <div>
-                    <h2>Inkomsten & vaste lasten</h2>
+                    <h2>Inkomsten & uitgaven</h2>
                     <p>Het verschil in één oogopslag</p>
                 </div><span class="chart-heading-icon"><x-icon name="chart-no-axes-column-increasing" /></span>
             </div>
             <div class="comparison-chart"><canvas id="comparison-chart" role="img"
-                    aria-label="Inkomsten {{ Money::format($income) }} en vaste lasten {{ Money::format($costs) }} gemiddeld per maand."></canvas>
+                    aria-label="Inkomsten {{ Money::format($income) }}, gemiddelde vaste lasten {{ Money::format($costs) }} en losse uitgaven {{ Money::format($variableCosts) }}."></canvas>
             </div>
             <div class="comparison-legend"><span><i class="legend-dot"
                         style="--dot-color:#10b981"></i>Inkomsten</span><span><i class="legend-dot"
-                        style="--dot-color:#c7d2fe"></i>Vaste lasten</span><span
+                        style="--dot-color:#a78bfa"></i>Vaste lasten</span><span><i class="legend-dot" style="--dot-color:#f59e0b"></i>Uitgaven</span><span
                     class="comparison-month">{{ ucfirst($month->translatedFormat('F Y')) }}</span></div>
         </article>
     </section>
@@ -141,5 +142,9 @@
                     lasten</span><span>Gemiddeld per maand <strong>{{ Money::format($costs) }}</strong></span></div>
         @endif
     </section>
-    <script id="chart-data" type="application/json">{!! json_encode(['categories' => $categories, 'income' => $income, 'costs' => $costs], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!}</script>
+    <section class="panel expenses-panel recent-spending">
+        <div class="panel-heading"><div><h2>Recente uitgaven</h2><p>Je vijf meest recente losse uitgaven in {{ $month->translatedFormat('F Y') }}</p></div><a class="text-link" href="{{ route('spending.index', ['month' => $month->format('Y-m')]) }}">Alle uitgaven bekijken <x-icon name="arrow-right" /></a></div>
+        <x-spending-table :entries="$variableExpenses->take(5)" :month="$month" :dashboard="true" />
+    </section>
+    <script id="chart-data" type="application/json">{!! json_encode(['categories' => $categories, 'income' => $income, 'costs' => $costs, 'variableCosts' => $variableCosts], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!}</script>
 </x-app-layout>

@@ -1,6 +1,6 @@
 # GeldGrip
 
-Persoonlijk financieel dashboard. Je houdt je netto-inkomen en vaste lasten bij en ziet wat er gemiddeld per maand overblijft. De schermafbeeldingen hieronder laten de applicatie zien zonder dat je hem hoeft te installeren.
+Persoonlijk financieel dashboard. Je houdt je netto-inkomen, vaste lasten en losse uitgaven bij, ziet wat er per maand overblijft en probeert een ander budget uit. De schermafbeeldingen hieronder laten de applicatie zien zonder dat je hem hoeft te installeren.
 
 ## Schermafbeeldingen
 
@@ -12,16 +12,25 @@ Netto maandinkomen, vaste lasten en wat er overblijft, plus een verdeling per ca
 
 ### Op je telefoon
 
-Hetzelfde overzicht op een smal scherm.
+Hetzelfde overzicht op een smal scherm, met het menu dicht.
 
 ![Dashboard op een telefoon](docs/screenshots/dashboard-mobile.jpg)
+
+### Budgetsimulator
+
+Probeer een ander inkomen of extra lasten uit. Je opgeslagen gegevens blijven staan.
+
+![Budgetsimulator in donkere weergave](docs/screenshots/simulator-dark-v2.jpg)
 
 ## Wat je ermee kunt
 
 - Een account aanmaken, inloggen, uitloggen, ingelogd blijven en je wachtwoord herstellen.
 - Meerdere inkomstenbronnen bijhouden.
 - Vaste lasten beheren met categorie, frequentie, betaaldag en een begin- en einddatum.
+- Losse uitgaven per maand bijhouden, met categorie, zoeken en sorteren.
 - Per maand zien wat er overblijft, met een categorieoverzicht en een vergelijking.
+- Een budget uitproberen met ander inkomen of extra lasten, zonder je opgeslagen gegevens te wijzigen.
+- Wisselen tussen een lichte, donkere of systeemweergave.
 - Zoeken, filteren, en je profiel of wachtwoord wijzigen. Je account verwijderen haalt ook de financiële gegevens weg.
 
 ## Techniek

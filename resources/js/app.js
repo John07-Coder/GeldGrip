@@ -6,6 +6,7 @@ import {
     ArrowUpRight,
     BadgeCheck,
     CalendarDays,
+    Calculator,
     Car,
     ChartNoAxesColumnIncreasing,
     ChartNoAxesCombined,
@@ -15,6 +16,9 @@ import {
     ChevronRight,
     CircleAlert,
     CircleCheck,
+    Clapperboard,
+    FlaskConical,
+    HeartPulse,
     House,
     Info,
     Landmark,
@@ -24,21 +28,29 @@ import {
     LockKeyhole,
     LogOut,
     Menu,
+    Monitor,
+    Moon,
     Pencil,
     Plus,
     ReceiptText,
+    RotateCcw,
     Search,
     Settings2,
     Shapes,
+    Shirt,
+    ShoppingBag,
+    ShoppingBasket,
     ShieldCheck,
     SlidersHorizontal,
     Sparkles,
     Sprout,
+    Sun,
     Trash2,
     TrendingDown,
     TrendingUp,
     TriangleAlert,
     Wallet,
+    Utensils,
     Wifi,
     X,
 } from "lucide";
@@ -50,6 +62,7 @@ createIcons({
         ArrowUpRight,
         BadgeCheck,
         CalendarDays,
+        Calculator,
         Car,
         ChartNoAxesColumnIncreasing,
         ChartNoAxesCombined,
@@ -59,6 +72,9 @@ createIcons({
         ChevronRight,
         CircleAlert,
         CircleCheck,
+        Clapperboard,
+        FlaskConical,
+        HeartPulse,
         House,
         Info,
         Landmark,
@@ -68,21 +84,29 @@ createIcons({
         LockKeyhole,
         LogOut,
         Menu,
+        Monitor,
+        Moon,
         Pencil,
         Plus,
         ReceiptText,
+        RotateCcw,
         Search,
         Settings2,
         Shapes,
+        Shirt,
+        ShoppingBag,
+        ShoppingBasket,
         ShieldCheck,
         SlidersHorizontal,
         Sparkles,
         Sprout,
+        Sun,
         Trash2,
         TrendingDown,
         TrendingUp,
         TriangleAlert,
         Wallet,
+        Utensils,
         Wifi,
         X,
     },
@@ -90,6 +114,27 @@ createIcons({
 });
 
 if (document.getElementById("chart-data")) import("./dashboard");
+if (document.getElementById("simulator-data")) import("./simulator");
+
+const syncTheme = () => {
+    document.querySelectorAll('[data-theme-option]').forEach(input => {
+        input.checked = input.value === window.GeldGripTheme.get();
+    });
+    const label = document.documentElement.classList.contains('dark') ? 'Lichte weergave inschakelen' : 'Donkere weergave inschakelen';
+    document.querySelectorAll('[data-theme-toggle]').forEach(button => {
+        button.setAttribute('aria-label', label);
+        button.title = label;
+    });
+};
+syncTheme();
+window.addEventListener('geldgrip:theme', syncTheme);
+document.querySelectorAll('[data-theme-toggle]').forEach(button => button.addEventListener('click', () => {
+    window.GeldGripTheme.set(document.documentElement.classList.contains('dark') ? 'light' : 'dark');
+}));
+document.querySelectorAll('[data-theme-option]').forEach(input => input.addEventListener('change', () => {
+    window.GeldGripTheme.set(input.value);
+    document.getElementById('theme-status').textContent = 'Je weergavevoorkeur is toegepast.';
+}));
 
 const menuButton = document.getElementById("menu-toggle");
 const backdrop = document.querySelector(".sidebar-backdrop");
@@ -163,4 +208,26 @@ dialog?.querySelector("[data-confirm-delete]").addEventListener("click", () => {
 // If JS is disabled the native month form remains usable with its submit button.
 document.getElementById("month")?.addEventListener("change", (event) => {
     if (event.target.validity.valid) event.target.form.requestSubmit();
+});
+
+document.querySelectorAll('form[method="post"]').forEach(form => {
+    form.addEventListener('submit', event => {
+        if (event.defaultPrevented) return;
+        form.setAttribute('aria-busy', 'true');
+        form.querySelectorAll('button[type="submit"], button:not([type])').forEach(button => {
+            button.disabled = true;
+            button.dataset.originalLabel = button.textContent;
+            button.textContent = 'Bezig…';
+        });
+    });
+});
+window.addEventListener('pageshow', () => {
+    syncTheme();
+    document.querySelectorAll('form[aria-busy]').forEach(form => {
+        form.removeAttribute('aria-busy');
+        form.querySelectorAll('[data-original-label]').forEach(button => {
+            button.disabled = false;
+            button.textContent = button.dataset.originalLabel;
+        });
+    });
 });

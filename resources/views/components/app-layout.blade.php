@@ -9,6 +9,7 @@
     <meta name="description" content="Meer overzicht. Meer rust. Houd je inkomsten en vaste lasten bij met GeldGrip.">
     <title>{{ $title }} · GeldGrip</title>
     <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
+    <x-theme-init />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
@@ -20,13 +21,13 @@
                 aria-label="Menu sluiten"><x-icon name="x" /></button></div>
         <div class="workspace-label">PERSOONLIJKE OMGEVING</div>
         <nav class="nav-list">
-            @foreach ([['dashboard', 'layout-dashboard', 'Dashboard'], ['incomes.index', 'wallet', 'Inkomsten'], ['expenses.index', 'receipt-text', 'Vaste lasten']] as [$route, $icon, $label])
+            @foreach ([['dashboard', 'layout-dashboard', 'Dashboard'], ['incomes.index', 'wallet', 'Inkomsten'], ['expenses.index', 'receipt-text', 'Vaste lasten'], ['spending.index', 'shopping-basket', 'Uitgaven'], ['simulator', 'flask-conical', 'Budgetsimulator']] as [$route, $icon, $label])
+                @php($activePattern = str_contains($route, '.') ? explode('.', $route)[0] . '.*' : $route)
                 <a href="{{ route($route, $month ? ['month' => $month->format('Y-m')] : []) }}"
                     @class([
                         'nav-link',
-                        'active' => request()->routeIs(
-                            $route === 'dashboard' ? 'dashboard' : explode('.', $route)[0] . '.*'),
-                    ]) @if (request()->routeIs($route === 'dashboard' ? 'dashboard' : explode('.', $route)[0] . '.*')) aria-current="page" @endif>
+                        'active' => request()->routeIs($activePattern),
+                    ]) @if (request()->routeIs($activePattern)) aria-current="page" @endif>
                     <x-icon :name="$icon" /><span>{{ $label }}</span><x-icon name="chevron-right"
                         class="nav-arrow" />
                 </a>
@@ -53,8 +54,13 @@
             <div class="topbar-actions">
                 @if ($month)
                     <form method="get"
-                        action="{{ route(request()->routeIs('dashboard') ? 'dashboard' : (request()->routeIs('incomes.*') ? 'incomes.index' : 'expenses.index')) }}"
+                        action="{{ route(match (true) { request()->routeIs('dashboard') => 'dashboard', request()->routeIs('simulator') => 'simulator', request()->routeIs('incomes.*') => 'incomes.index', request()->routeIs('spending.*') => 'spending.index', default => 'expenses.index' }) }}"
                         class="month-picker">
+                        @foreach (['search', 'category', 'sort', 'direction'] as $filter)
+                            @if (request()->routeIs('spending.index', 'expenses.index') && request()->filled($filter))
+                                <input type="hidden" name="{{ $filter }}" value="{{ request($filter) }}">
+                            @endif
+                        @endforeach
                         <x-icon name="calendar-days" /><label class="sr-only" for="month">Selecteer maand en
                             jaar</label>
                         <input type="month" name="month" id="month" value="{{ $month->format('Y-m') }}" required
@@ -63,6 +69,7 @@
                                 name="arrow-right" /></button>
                     </form>
                 @endif
+                <x-theme-toggle />
                 <a href="{{ route('settings.edit') }}" class="user-profile"><span
                         class="avatar">{{ mb_strtoupper(mb_substr(auth()->user()->name, 0, 1)) }}</span><span
                         class="user-detail"><strong>{{ auth()->user()->name }}</strong><small>Persoonlijk

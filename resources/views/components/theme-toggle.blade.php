@@ -1,0 +1,1 @@
+<button type="button" class="icon-button theme-toggle" data-theme-toggle aria-label="Wisselen tussen licht en donker" title="Weergave wisselen"><span class="theme-to-dark"><x-icon name="moon" /></span><span class="theme-to-light"><x-icon name="sun" /></span></button>

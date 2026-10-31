@@ -1,20 +1,32 @@
 # GeldGrip
 
-Persoonlijk financieel dashboard. Je houdt je netto-inkomen, vaste lasten en losse uitgaven bij, ziet wat er per maand overblijft en probeert een ander budget uit. De schermafbeeldingen hieronder laten de applicatie zien zonder dat je hem hoeft te installeren.
+Persoonlijk financieel dashboard. Je houdt je netto-inkomen, vaste lasten en losse uitgaven bij, stelt categoriebudgetten in en kijkt vooruit met financiële voorspellingen. De schermafbeeldingen hieronder tonen de actuele applicatie met uitsluitend fictieve gegevens.
 
 ## Schermafbeeldingen
 
 ### Dashboard
 
-Netto maandinkomen, vaste lasten en wat er overblijft, plus een verdeling per categorie.
+Netto maandinkomen, vaste lasten, losse uitgaven en wat er overblijft, plus een verdeling per categorie. Lager op de pagina staan je budgetten en financiële vooruitblik.
 
-![Dashboard met netto-inkomen, vaste lasten en wat er overblijft](docs/screenshots/dashboard-desktop.jpg)
+![Actueel GeldGrip-dashboard met vier maandkaarten en financiële grafieken](docs/screenshots/dashboard-desktop.jpg)
+
+### Budgetten per categorie
+
+Stel per maand je eigen budgetten in. De voortgangsbalken en waarschuwingen laten zien welke categorieën hun limiet naderen of overschrijden.
+
+![Categoriebudgetten met voortgang, beschikbare bedragen en waarschuwingen](docs/screenshots/category-budgets.jpg)
+
+### Financiële voorspellingen
+
+Bekijk je verwachte cumulatieve overschot over 3, 6 of 12 maanden. Je kunt de aannames tijdelijk aanpassen. Bekende begin- en einddatums tellen standaard mee; de projectie is geen banksaldo.
+
+![Financiële voorspelling over zes maanden met interactieve lijngrafiek in dark mode](docs/screenshots/forecasts-dark.jpg)
 
 ### Op je telefoon
 
 Hetzelfde overzicht op een smal scherm, met het menu dicht.
 
-![Dashboard op een telefoon](docs/screenshots/dashboard-mobile.jpg)
+<img src="docs/screenshots/dashboard-mobile.jpg" alt="Actueel GeldGrip-dashboard op een telefoon van 390 pixels breed" width="320">
 
 ### Budgetsimulator
 
@@ -28,6 +40,8 @@ Probeer een ander inkomen of extra lasten uit. Je opgeslagen gegevens blijven st
 - Meerdere inkomstenbronnen bijhouden.
 - Vaste lasten beheren met categorie, frequentie, betaaldag en een begin- en einddatum.
 - Losse uitgaven per maand bijhouden, met categorie, zoeken en sorteren.
+- Per categorie en maand een budget instellen, met voortgang, waarschuwingen en overnemen van de vorige maand.
+- Verwachte overschotten over 3, 6 en 12 maanden bekijken, met instelbare aannames en begin- en einddatums.
 - Per maand zien wat er overblijft, met een categorieoverzicht en een vergelijking.
 - Een budget uitproberen met ander inkomen of extra lasten, zonder je opgeslagen gegevens te wijzigen.
 - Wisselen tussen een lichte, donkere of systeemweergave.
@@ -39,7 +53,7 @@ Laravel 13, Blade, Tailwind CSS, Chart.js, SQLite en PHPUnit. Lokaal gaat e-mail
 
 ## Clonen en starten
 
-Je hebt Git, PHP 8.3 of nieuwer, [Composer](https://getcomposer.org) en [Node.js](https://nodejs.org) 20 of nieuwer nodig.
+Je hebt Git, PHP 8.3 of nieuwer, [Composer](https://getcomposer.org) en [Node.js](https://nodejs.org) 22.12 of nieuwer nodig.
 
 ```bash
 git clone https://github.com/John07-Coder/GeldGrip.git
@@ -68,10 +82,14 @@ Log in met `demo@example.test` en het gekozen wachtwoord. De schermafbeeldingen 
 
 ```bash
 php artisan test
+npm test
+npm run build
 ```
+
+De suite controleert ook dubbele budgetten, maandgrenzen, gebruikersisolatie, prognoses en tijdelijke aannames. Zie [de implementatie en verificatie](docs/BUDGETTEN-EN-VOORSPELLINGEN.md) voor de rekenregels en uitgevoerde controles.
 
 ## Beveiliging
 
-- Je ziet alleen je eigen inkomsten en lasten. Een id van iemand anders levert 404 op.
+- Je ziet alleen je eigen inkomsten, lasten, uitgaven en budgetten. Een id van iemand anders levert 404 op. Voorspellingen gebruiken uitsluitend je eigen gegevens.
 - De client kan geen `user_id` meesturen. Laravel verzorgt de sessie, de wachtwoordhash en CSRF.
 - Inloggen, registreren en wachtwoordherstel zijn beperkt in aantal pogingen per minuut.

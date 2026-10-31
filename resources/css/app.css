@@ -2445,3 +2445,78 @@ input[type="range"]#income-slider { padding: 0; border: 0; height: 30px; accent-
     .stats-four .stat-value { font-size: 18px; }
     .stats-four .stat-category { font-size: 14px; }
 }
+
+/* Category budgets and financial projections share the existing surfaces and colors. */
+.budget-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.budget-card { padding: 24px; }
+.budget-card-top { display: flex; align-items: center; gap: 10px; margin-bottom: 25px; }
+.budget-card-top .row-actions { margin-left: auto; display: flex; }
+.budget-progress { --progress: #10b981; }
+.budget-progress.warning { --progress: #f59e0b; }
+.budget-progress.danger { --progress: #f87171; }
+.budget-progress-label { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+.budget-progress-label strong { font-size: 13px; overflow-wrap: anywhere; }
+.budget-progress-label > span { color: var(--muted); font-size: 10px; }
+.budget-track { height: 8px; background: var(--surface-subtle); border-radius: 20px; overflow: hidden; }
+.budget-track > span { display: block; height: 100%; background: var(--progress); border-radius: inherit; }
+.budget-amounts { display: grid; gap: 12px; margin: 24px 0 0; font-size: 11px; }
+.budget-amounts > div { display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between; }
+.budget-amounts dt { color: var(--muted); }
+.budget-amounts dd { margin: 0; font-weight: 600; font-variant-numeric: tabular-nums; }
+.budget-overrun { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border); color: var(--danger-text); font-size: 11px; }
+.budget-warning { background: var(--amber-bg); border-color: #d69d20; color: var(--text); }
+.budget-empty-actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 10px; }
+.dashboard-planning { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; margin: 22px 0; }
+.planning-panel { padding: 24px; }
+.planning-heading { display: flex; gap: 12px; align-items: start; justify-content: space-between; margin-bottom: 22px; }
+.planning-heading h2 { font-size: 13px; }
+.planning-heading p, .planning-explanation, .planning-empty { color: var(--muted); font-size: 10px; line-height: 1.8; }
+.planning-heading p { margin-top: 4px; }
+.planning-panel .budget-progress + .budget-progress { margin-top: 20px; }
+.planning-total { display: block; font-size: 32px; letter-spacing: -1px; margin: 0 0 10px; overflow-wrap: anywhere; }
+.planning-explanation { margin-bottom: 18px; }
+.planning-empty { margin-bottom: 18px; }
+.forecast-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin-bottom: 24px; flex-wrap: wrap; }
+.forecast-toolbar > p { font-size: 11px; color: var(--muted); }
+.period-tabs { display: inline-flex; background: var(--surface); border: 1px solid var(--border); padding: 4px; border-radius: 9px; gap: 4px; }
+.period-tab { padding: 9px 17px; border: 0; border-radius: 6px; color: var(--muted); background: transparent; font-size: 11px; font-weight: 600; }
+.period-tab.selected { background: var(--success-bg); color: var(--success-text); }
+.period-tab:hover { background: var(--surface-subtle); }
+.forecast-assumptions { padding: 24px; margin-bottom: 22px; }
+.forecast-assumptions > div > p, .assumptions-note { color: var(--muted); font-size: 11px; line-height: 1.8; margin-top: 5px; }
+.forecast-fields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; margin: 22px 0 15px; }
+.forecast-reset-row { display: flex; flex-wrap: wrap; align-items: center; gap: 15px; margin-top: 20px; }
+#forecast-status { color: var(--muted); font-size: 10px; }
+#forecast-error { margin-top: 15px; }
+.forecast-chart { height: 320px; padding: 20px 24px 24px; }
+.forecast-chart-panel { margin-bottom: 22px; }
+.forecast-table-panel { margin-top: 24px; }
+.forecast-table th { white-space: normal; }
+.forecast-table tbody th { color: var(--text); background: transparent; border: 0; border-bottom: 1px solid var(--border); font-size: 11px; font-weight: 600; padding-block: 15px; }
+.forecast-table td.text-negative { color: var(--danger-text); }
+@media (max-width: 1250px) {
+    .budget-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 1000px) {
+    .forecast-fields { grid-template-columns: 1fr; gap: 18px; }
+    .forecast-table tbody th { display: block; padding: 0 0 12px; border: 0; background: transparent; }
+    .forecast-table td[data-label]::before { max-width: 55%; }
+    .dashboard-planning { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+    .budget-grid { grid-template-columns: 1fr; gap: 16px; }
+    .budget-card, .planning-panel, .forecast-assumptions { padding: 20px; }
+    .budget-empty-actions, .budget-empty-actions form { width: 100%; }
+    .budget-empty-actions .btn { width: 100%; white-space: normal; }
+    .planning-heading { flex-wrap: wrap; }
+    .forecast-chart { height: 280px; padding: 16px 12px; }
+    .period-tabs { display: flex; width: 100%; }
+    .period-tab { flex: 1; padding-inline: 10px; }
+    .forecast-reset-row .btn { white-space: normal; width: 100%; }
+    .forecast-table tbody { grid-template-columns: 1fr; }
+}
+@media (max-width: 360px) {
+    .topbar .month-picker { max-width: 138px; }
+    .topbar .month-picker input:not([type="hidden"]) { width: 120px; }
+    .topbar-title > span { min-width: 0; max-width: 80px; }
+}

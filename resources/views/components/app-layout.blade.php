@@ -21,7 +21,7 @@
                 aria-label="Menu sluiten"><x-icon name="x" /></button></div>
         <div class="workspace-label">PERSOONLIJKE OMGEVING</div>
         <nav class="nav-list">
-            @foreach ([['dashboard', 'layout-dashboard', 'Dashboard'], ['incomes.index', 'wallet', 'Inkomsten'], ['expenses.index', 'receipt-text', 'Vaste lasten'], ['spending.index', 'shopping-basket', 'Uitgaven'], ['simulator', 'flask-conical', 'Budgetsimulator']] as [$route, $icon, $label])
+            @foreach ([['dashboard', 'layout-dashboard', 'Dashboard'], ['incomes.index', 'wallet', 'Inkomsten'], ['expenses.index', 'receipt-text', 'Vaste lasten'], ['spending.index', 'shopping-basket', 'Uitgaven'], ['budgets.index', 'target', 'Budgetten'], ['simulator', 'flask-conical', 'Budgetsimulator'], ['forecasts', 'chart-no-axes-combined', 'Voorspellingen']] as [$route, $icon, $label])
                 @php($activePattern = str_contains($route, '.') ? explode('.', $route)[0] . '.*' : $route)
                 <a href="{{ route($route, $month ? ['month' => $month->format('Y-m')] : []) }}"
                     @class([
@@ -54,8 +54,9 @@
             <div class="topbar-actions">
                 @if ($month)
                     <form method="get"
-                        action="{{ route(match (true) { request()->routeIs('dashboard') => 'dashboard', request()->routeIs('simulator') => 'simulator', request()->routeIs('incomes.*') => 'incomes.index', request()->routeIs('spending.*') => 'spending.index', default => 'expenses.index' }) }}"
+                        action="{{ route(match (true) { request()->routeIs('dashboard') => 'dashboard', request()->routeIs('simulator') => 'simulator', request()->routeIs('forecasts') => 'forecasts', request()->routeIs('budgets.*') => 'budgets.index', request()->routeIs('incomes.*') => 'incomes.index', request()->routeIs('spending.*') => 'spending.index', default => 'expenses.index' }) }}"
                         class="month-picker">
+                        @if (request()->routeIs('forecasts'))<input type="hidden" name="horizon" value="{{ request('horizon', 6) }}">@endif
                         @foreach (['search', 'category', 'sort', 'direction'] as $filter)
                             @if (request()->routeIs('spending.index', 'expenses.index') && request()->filled($filter))
                                 <input type="hidden" name="{{ $filter }}" value="{{ request($filter) }}">

@@ -19,3 +19,16 @@ export function summarizeScenario(scenario) {
     const variable = scenario.variable.reduce((sum, item) => sum + item.cents, 0);
     return { income: scenario.income, fixed, variable, remaining: scenario.income - fixed - variable };
 }
+
+export function projectForecast(months, horizon, assumptions = {}) {
+    let cumulative = 0;
+    return months.slice(0, horizon).map(month => {
+        const income = assumptions.income ?? month.income;
+        const fixed = assumptions.fixed ?? month.fixed;
+        const variable = assumptions.variable ?? month.variable;
+        const costs = fixed + variable;
+        const remaining = income - costs;
+        cumulative += remaining;
+        return { ...month, income, fixed, variable, costs, remaining, cumulative };
+    });
+}

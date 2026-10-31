@@ -13,6 +13,12 @@ trait HasMonthlyAmount
         return Money::monthly($this->amount, $this->frequency);
     }
 
+    public function isRelevantTo(CarbonImmutable $month): bool
+    {
+        return $this->is_active && $this->start_date <= $month->endOfMonth()
+            && ($this->end_date === null || $this->end_date >= $month->startOfMonth());
+    }
+
     public function scopeRelevantTo(Builder $query, CarbonImmutable $month): Builder
     {
         return $query->where('is_active', true)

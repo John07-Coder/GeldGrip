@@ -33,6 +33,11 @@ class User extends Authenticatable
         return $this->hasMany(Expense::class);
     }
 
+    public function categoryBudgets(): HasMany
+    {
+        return $this->hasMany(CategoryBudget::class);
+    }
+
     /**
      * Get the attributes that should be cast.
      *

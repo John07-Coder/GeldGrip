@@ -128,6 +128,16 @@
             </div>
         </div>
     </section>
+    <section class="dashboard-planning" aria-label="Budgetten en vooruitblik">
+        <article class="panel planning-panel"><div class="planning-heading"><div><h2>Je budgetten in beeld</h2><p>Categorieën die hun limiet het dichtst naderen</p></div><a class="text-link" href="{{ route('budgets.index', ['month' => $month->format('Y-m')]) }}">Alle budgetten <x-icon name="arrow-right" /></a></div>
+            @forelse ($budgetOverview['rows']->sortByDesc('percentage')->take(3) as $row)
+                <x-budget-progress :row="$row" />
+            @empty
+                <p class="planning-empty">Geef je uitgaven een grens die bij je past.</p><a class="btn btn-secondary" href="{{ route('budgets.create', ['month' => $month->format('Y-m')]) }}"><x-icon name="plus" />Je eerste budget toevoegen</a>
+            @endforelse
+        </article>
+        <article class="panel planning-panel"><div class="planning-heading"><div><h2>Financiële vooruitblik</h2><p>Verwacht cumulatief overschot over 6 maanden</p></div><span class="stat-icon green"><x-icon name="chart-no-axes-combined" /></span></div><strong @class(['planning-total', 'text-negative' => $forecastTotal < 0, 'text-positive' => $forecastTotal >= 0])>{{ Money::format($forecastTotal) }}</strong><p class="planning-explanation">Vanaf € 0, met bekende begin- en einddatums. {{ $forecastHistoryCount ? 'Uitgaven geschat met '.$forecastHistoryCount.' volledige '.($forecastHistoryCount === 1 ? 'maand.' : 'maanden.') : 'Nog geen uitgavenhistorie; de schatting is € 0.' }}</p><a class="text-link" href="{{ route('forecasts', ['month' => $month->format('Y-m')]) }}">Bekijk je voorspelling <x-icon name="arrow-right" /></a></article>
+    </section>
     <section class="panel expenses-panel">
         <div class="panel-heading">
             <div>

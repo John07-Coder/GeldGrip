@@ -17,6 +17,7 @@ import {
     CircleAlert,
     CircleCheck,
     Clapperboard,
+    Copy,
     FlaskConical,
     HeartPulse,
     House,
@@ -45,6 +46,7 @@ import {
     Sparkles,
     Sprout,
     Sun,
+    Target,
     Trash2,
     TrendingDown,
     TrendingUp,
@@ -73,6 +75,7 @@ createIcons({
         CircleAlert,
         CircleCheck,
         Clapperboard,
+        Copy,
         FlaskConical,
         HeartPulse,
         House,
@@ -101,6 +104,7 @@ createIcons({
         Sparkles,
         Sprout,
         Sun,
+        Target,
         Trash2,
         TrendingDown,
         TrendingUp,
@@ -115,6 +119,7 @@ createIcons({
 
 if (document.getElementById("chart-data")) import("./dashboard");
 if (document.getElementById("simulator-data")) import("./simulator");
+if (document.getElementById("forecast-data")) import("./forecast");
 
 const syncTheme = () => {
     document.querySelectorAll('[data-theme-option]').forEach(input => {
